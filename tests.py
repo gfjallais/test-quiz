@@ -104,3 +104,21 @@ def test_correct_selected_choices_exceeds_max_selections():
     question.add_choice('b', is_correct=False)
     with pytest.raises(Exception, match='Cannot select more than 1 choices'):
         question.correct_selected_choices([1, 2])
+
+@pytest.fixture
+def question_with_choices():
+    question = Question(title='Sample Question', max_selections=2)
+    question.add_choice('Choice 1', is_correct=True)
+    question.add_choice('Choice 2', is_correct=False)
+    question.add_choice('Choice 3', is_correct=True)
+    return question
+
+def test_fixture_correct_selected_choices(question_with_choices):
+    correct_selections = question_with_choices.correct_selected_choices([1, 3])
+    assert correct_selections == [1, 3]
+
+def test_fixture_remove_choice(question_with_choices):
+    question_with_choices.remove_choice_by_id(2)
+    assert len(question_with_choices.choices) == 2
+    assert question_with_choices.choices[0].id == 1
+    assert question_with_choices.choices[1].id == 3
